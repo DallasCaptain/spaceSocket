@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <p>Hello Class</p>
+    <div id='world'>
+
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var id = ''
+        socket.on('welcome',msg =>{
+            id = socket.id
+            console.log(msg)
+        })
+        socket.on('newship',data=>{
+            console.log('new ship',data)
+            $('#world').append('<img src="/ship.png" id="playership">')
+            $('#world').append('<img src="/ship.png" id="othership">')
+            $('#playership').css('left',data.loc)
+            $('#othership').css('left',550)
+        })
+        socket.on('redraw',users=>{
+            $('#playership').css('left',users[id].loc)
+            
+            for(let user of Object.keys(users)){
+                console.log(user)
+                if(user != id){
+                    $('#othership').css('left',users[user].loc)
+                }
+            }
+                
+           
+        })
+
+
+        document.onkeypress = function (e) {
+           // e = e || window.event;
+        // use   e.keyCode
+            if(e.key ==='w'){
+                //shoot
+            }else if(e.key ==='a'){
+                //left
+                socket.emit('move','left')
+            }else if(e.key ==='d'){
+                socket.emit('move','right')
+            }
+            console.log(e)
+        };
+
+    </script>
+    
+
+</body>
+</html>
